@@ -1,0 +1,48 @@
+#### ver-final
+============= 懶人包 =============
+1.< NEW!- 12/23 > 你要到ollama裝兩個模型"qwen3:8b"+"llama3:8b"
+2.< NEW!- 12/23 > 啟動方式 : 先確保extension有裝好 -> 啟動server.py -> 在extension輸入資訊並送出 -> 等待 -> 會在extension那裏看到結果
+3.< NEW!- 12/23 > 怎麼看COT推理圖:先等模型跑完 -> 後端再資料夾logs/cot_graph/生成資料 -> 到終端輸入"python cot_graph.py" -> 到檔案總管那裏的資料夾logs/cot_graph/找到生成的html，打開就有了，圖示可以移動和放大
+
+============= ollama安裝 =============
+1.使用前請確保已安裝python、WSL、ollama和docker，並確認可以運作，安裝教學影片連結:https://youtu.be/JpQC0W91E6k
+2.docker下載完成後，若無法使用，請在CMD輸入"wsl --install"
+3.確認docker可以運作後，在CMD輸入"docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main"
+    ，進入後記得完成帳號註冊
+4.在docker裡的setting，下載模型"qwen3:8b"
+5.< NEW!- 12/22 > 由於要新增前端可以換模型的需求，必須下載模型"llama3:8b"
+
+============= vscode安裝 =============
+5.pip install -r requirements.txt 可以安裝 requirements.txt 的套件
+6.需下載vscode的Extension API
+7.目前使用的是 "qwen3:8b" ，所以請先確認已經安裝此模型
+8.目前有以下主要檔案:analyzer.py(呼叫本地API分析)、html_utils.py(HTML處理與萃取)、models.py(Pydantic模型)
+    、server.py(用Flask Server來接收文字/HTML)、tools.py(LangChain工具定義)、requirements.txt(安裝所需套件的項目)、blacklist.py(管理黑名單的資料庫)
+    、phishtank.csv(官方黑名單)、user_blacklist.txt(使用者自訂黑名單)、tools(靜態分析工具)、verify_system.py(驗證流程與模型回傳格式)、view_cot_logs.py(將COT分析過程已JSONL紀錄)
+    、cot_graph.py(生成COT推理圖)
+9.若出現analyzer.cpython-313.pyc等等之類的東西，那是Python自動生成的快取檔案，用來加速的
+10.< NEW!- 12/22 > 生成的COT紀錄會存放在"logs"資料夾內
+
+============= code =============
+1.目前專案改成使用LangChain與langchain-openai來產生結構化輸出，不再使用instructor
+2.server那裏的flask_cors一定要用，不然可能會連不到extension
+3.http://127.0.0.1:5000/analyze 只會在自己的電腦上有效，所以必須安裝ollama
+4.LangChain實作-串接雙階段推理流程，管理Prompt設計、模型呼叫與結構化輸出
+5.COT實作-雙階段判斷，第一階段:列出可疑特徵+列出安全特徵+彙整推理重點，第二階段根據第一階段做最終決策
+6.< NEW!- 12/22 > 為了前端可以偵測google搜尋結果頁，重新啟動tools.py的靜態分析網址功能，但是僅用在此，不參與LLM判斷
+7.< NEW!- 12/22 > 投票機制-為了確保每次輸出的一致性，採取犧牲些許時間換取額外精準度，同時採用動態投票，超過半數直接輸出投票結果
+8.< NEW!- 12/22 > 大部分參數與模型選擇在analyzer.py內完成調整，需要微調請到那裏
+9.< NEW!- 12/23 > 能夠呈現COT推理圖，會存放在資料夾logs/cot_graph/，可以直接從檔案總管那裏打開html
+
+============= 使用 =============
+1.啟動方式 : 先確保extension有裝好 -> 啟動server.py -> 在extension輸入資訊並送出 -> 等待 -> 會在extension那裏看到結果
+2.vscode的"在專用終端機執行python檔案"這個選項來啟動server.py
+3.目前能判斷"html"和"內文"
+4.前端能夠已黑名單去做網址判斷
+5.< NEW!- 12/22 > 前端能夠在不載入完整網頁即可初步檢測Google搜尋結果頁(三階段-黑名單+網址靜態分析+後端深度分析)
+6.< NEW!- 12/23 > 要查看COT觀察圖，首先要先等模型判斷完該網站後，手動在終端輸入"python cot_graph.py"(手動是為了減少系統額外的運作時間)，它會在資料夾logs/cot_graph/產生推理圖html，去檔案總管那裏打開可以看到推理圖
+7.< NEW!- 12/23 > 前端能夠切換兩種模型"qwen3:8b"跟"llama3:8b"，預設是"qwen3:8b"
+
+
+
+

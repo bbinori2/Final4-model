@@ -1,0 +1,14 @@
+opencc
+flask
+flask-cors
+requests
+beautifulsoup4
+pydantic
+openai
+langchain
+langchain-core
+langchain-openai
+networkx
+pyvis
+concurrent.futures
+
